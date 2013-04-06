@@ -1,5 +1,5 @@
 =================================
-|		thedumpster 1.0         |
+|		thedumpster 1.1         |
 |	  Made by tunnelshade       |
 |	 tunnelshade@gmail.com      |
 =================================
@@ -28,7 +28,7 @@ PyQuery - https://pypi.python.org/pypi/pyquery
 
 TODO:
 ----
-* Adding support for using theharvester domain results<
+* Adding support for using theharvester domain results
 * Pastebin & Pastie search using emails for any password dumps
 * Adding larger number of dorks
 * Better division of dorks
@@ -43,3 +43,10 @@ Christian Martorella -  theHarvester
 Gael Pasgrimaud - PyQuery
 Larry Page and Sergey Brin - Google :P
 
+Changelog
+---------
+
+v 1.1
+-----
+* Google JSON/ATOM Search added and made default
+* Google websearch is optional

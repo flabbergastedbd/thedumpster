@@ -14,7 +14,7 @@ print("""
   \__|_| |_|\___|  \__,_|\__,_|_| |_| |_| .__/|___/\__\___|_|   
                                         | |                     
                                         |_|                     
-                Version-1.0  Made by tunnelshade
+                Version-1.1  Made by tunnelshade
         tunnelshade[at]gmail.com <=> www.tunnelshade.in
         
 ================================================================
@@ -45,6 +45,7 @@ parser.add_argument("domain", help="Root domain of the infrastructure")
 parser.add_argument("-l","--limit", default=10, help="Number of results to be returned in each section")
 parser.add_argument("-t","--type", help="Type of dorks to use")
 parser.add_argument("-a","--add", help="Additional custom search words")
+parser.add_argument("-ws","--websearch",help="To enable the use of google's search directly",action="store_true")
 
 
 args, unknown = parser.parse_known_args()
@@ -53,11 +54,6 @@ url_list = []
 proxies = []
 
 if __name__ == '__main__':
-    
-    print('\n[+] Domain      => '+ str(args.domain))
-    print('[+] Limit/Dork  => '+str(args.limit))
-    print('[+] Dorks       => '+str(args.type) if args.type != None else '[+] Dorks       => No Dorks')
-    print('[+] Proxies     => '+str(len(proxies))+'\n')
     
     dorks = ['']
     if args.type != None:
@@ -80,6 +76,12 @@ if __name__ == '__main__':
         line = str(line).rstrip('\n')
         proxies.append({'http':'http://'+line,'https':'https://'+line})
     f.close()
+    
+    print('\n[+] Domain      => '+ str(args.domain))
+    print('[+] Limit/Dork  => '+str(args.limit))
+    print('[+] Dorks       => '+str(args.type) if args.type != None else '[+] Dorks       => No Dorks')
+    print('[+] Proxies     => '+str(len(proxies))+'\n')
+
         
     try:
         counter = 1
@@ -87,7 +89,10 @@ if __name__ == '__main__':
             num = random.randrange(0,len(proxies),1)
             print('[+] Going through '+str(num)+' for request '+str(counter))
             obj = Search_Google(args.domain, [dork]+search_words , int(args.limit) , proxies[num])
-            url_list += obj.search(0)
+            if args.websearch:
+                url_list += obj.search(0)
+            else:
+                url_list += obj.search_api(0)
             counter += 1
     except KeyboardInterrupt:
         print("\n[*] Ok dude, Shutting the sh'it' down \n")
