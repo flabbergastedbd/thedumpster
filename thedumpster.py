@@ -14,36 +14,21 @@ print("""
   \__|_| |_|\___|  \__,_|\__,_|_| |_| |_| .__/|___/\__\___|_|   
                                         | |                     
                                         |_|                     
-                Version-1.1  Made by tunnelshade
+                Version-1.2  Made by tunnelshade
         tunnelshade[at]gmail.com <=> www.tunnelshade.in
         
-================================================================
-[*]type => what it contains
-[*] AnV => Advisories & Vulnerabilities
-[*] EM  => Error Messages
-[*] FCI => Files with Info
-[*] FH  => Footholds
-[*] VD  => Vulnerable Data
-[*] LP  => Login Portals
-[*] SD  => Sensitive Directories
-[*] VF  => Vulnerable files
-[*] VOD => Various Online Devices
-[*] WSD => Web Server Detection
-[*] VS  => Vulnerable Server Detection
-[*] WS  => Web Services
-[*] AP  => Admin Panel
-[*] OT  => Other Stuff
 ================================================================""")
 
 project_root = os.path.dirname(os.path.abspath(__file__))
 
 parser = argparse.ArgumentParser(description="A tool that can be used for passive recon using google dorks",
-                                epilog = "Ex:- python thedumpster.py -l 10 tunnelshade.in AnV")
+                                epilog = "Ex:- python thedumpster.py -l 10 -ghdb tunnelshade.in")
 
 
 parser.add_argument("domain", help="Root domain of the infrastructure")
-parser.add_argument("-l","--limit", default=10, help="Number of results to be returned in each section")
-parser.add_argument("-t","--type", help="Type of dorks to use")
+parser.add_argument("-l","--limit", default=2, help="Number of results/dork (default=2)")
+parser.add_argument("-ghdb","--ghdb", help="Flag to use GHDB",action="store_true")
+parser.add_argument("-ap","--adminpage",help="Flag to search for admin panels",action="store_true")
 parser.add_argument("-a","--add", help="Additional custom search words")
 parser.add_argument("-ws","--websearch",help="To enable the use of google's search directly",action="store_true")
 
@@ -55,15 +40,47 @@ proxies = []
 
 if __name__ == '__main__':
     
-    dorks = ['']
-    if args.type != None:
+    dorks = []
+    if args.ghdb == True:
+        print("""
+[1] AnV => Advisories & Vulnerabilities
+[2] EM  => Error Messages
+[3] FCI => Files with Info
+[4] FH  => Footholds
+[5] VD  => Vulnerable Data
+[6] LP  => Login Portals
+[7] SD  => Sensitive Directories
+[8] VF  => Vulnerable files
+[9] VOD => Various Online Devices
+[10] WSD => Web Server Detection
+[11] VS  => Vulnerable Server Detection
+[12] WS  => Web Services
+[13] OT  => Other Stuff
+================================================================""")
+        ghdb_dic = {1:'AnV',2:'EM',3:'FCI',4:'FH',5:'VD',6:'LP',7:'SD',8:'VF',9:'VOD',10:'WSD',11:'VS',12:'WS',13:'OT'}
+        key = input("\nPlease select the type of dorks(Enter number only) > ")
         conn = sqlite3.connect(os.path.join(project_root, 'database/ghdb.db'))
         c = conn.cursor()
-        c.execute("select dork from "+str(args.type))
+        c.execute("select dork from "+ghdb_dic[int(key)])
         for row in c:
             dorks.append(row[0])
         conn.commit()
         c.close()
+    
+    if args.adminpage == True:
+        conn = sqlite3.connect(os.path.join(project_root, 'database/adminpage.db'))
+        c = conn.cursor()
+        platforms = ['php','asp','cfm','js','cgi','brf']
+        for i in range(0,len(platforms)):
+            print("["+str(i)+"] "+platforms[i])
+        print("Please select appropriate platform")
+        code = input("\n> ")
+        c.execute("select dork from "+platforms[int(code)])
+        for row in c:
+            dorks.append(row[0])
+        conn.commit()
+        c.close()        
+        
     
     if args.add != None:
         search_words = [args.add]
@@ -79,7 +96,6 @@ if __name__ == '__main__':
     
     print('\n[+] Domain      => '+ str(args.domain))
     print('[+] Limit/Dork  => '+str(args.limit))
-    print('[+] Dorks       => '+str(args.type) if args.type != None else '[+] Dorks       => No Dorks')
     print('[+] Proxies     => '+str(len(proxies))+'\n')
 
         

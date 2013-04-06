@@ -61,6 +61,7 @@ class Search_Google():
                 temp_list = Google_Json_Parser(data)
                 if len(temp_list) != 0:
                     self.url_list += temp_list
+                    print(temp_list)
                 else:
                     break
             except urllib.error.HTTPError as e:

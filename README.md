@@ -1,5 +1,5 @@
 =================================
-|		thedumpster 1.1         |
+|		thedumpster 1.2         |
 |	  Made by tunnelshade       |
 |	 tunnelshade@gmail.com      |
 =================================
@@ -45,6 +45,9 @@ Larry Page and Sergey Brin - Google :P
 
 Changelog
 ---------
+v 1.2
+-----
+* Admin page finder using Google dorks
 
 v 1.1
 -----
