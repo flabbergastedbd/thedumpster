@@ -9,7 +9,11 @@ import gzip
 from lib.parser import Google_Results_Parser, Google_Json_Parser
 import time
 
-
+#===============================================================================
+# A class which has methods for direct search of search through API. Both the 
+# search methods have error catching ability for time-out and service unavailable
+# error. Gzip compression is used so as to reduce data usage.
+#===============================================================================
 class Search_Google():
     def __init__(self, domain, search_words,  limit, proxy, proxy_username='', proxy_password=''):
         self.domain = domain
@@ -26,7 +30,11 @@ class Search_Google():
         self.url += self.search_phrase
         self.limit = limit
         self.url_list = []
-                   
+    #=======================================================================    
+    # A method which starts searching from given result number and runs till
+    # the limit is exceeded or the search results get exhausted. The search
+    # is done directly without any JSON. Google_Results_Parser is called.     
+    #=======================================================================  
     def search(self, start):
         for start in range(0,self.limit,10):
             self.url += '&start=' + str(start)
@@ -47,7 +55,12 @@ class Search_Google():
             except urllib.error.URLError as e:
                 print("[!] Proxy server  ^ "+" appears down")
         return self.url_list
-    
+    #===========================================================================
+    # A method which starts searching from given result number and runs till
+    # the limit is exceeded or the search results get exhausted. Here search is
+    # done using JSON (Google CSE). If you wish to use your own CX and API-KEY
+    # , then replace the values in the first two lines. Google_Json_Parser called
+    #===========================================================================
     def search_api(self,start):
         self.url_api = 'https://www.googleapis.com/customsearch/v1?hl=en&cx=006870906752541368823:f6fsmzjzc0q'
         self.url_api += '&key=AIzaSyBuBomy0n51Gb4836isK2Mp65UZI_DrrwQ'
