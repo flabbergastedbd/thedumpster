@@ -21,7 +21,7 @@ class Search_Google():
         proxy_auth_handler = urllib.request.ProxyBasicAuthHandler()
         proxy_auth_handler.add_password(None, 'https://www.google.com/', proxy_username, proxy_password)
         self.opener = urllib.request.build_opener(proxy_handler, proxy_auth_handler)
-        self.opener.addheaders = [('User-Agent','Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20100101 Firefox/19.0'),
+        self.opener.addheaders = [('User-Agent','Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11'),
                                   ('Accept-Encoding','gzip')]
         self.url = 'https://www.google.com/search?hl=en&meta=&output=search'
         self.search_phrase = '&q=site:' + domain

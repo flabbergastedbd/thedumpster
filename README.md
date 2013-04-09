@@ -1,8 +1,5 @@
-=================================
-|		thedumpster 1.3         |
-|	  Made by tunnelshade       |
-|	 tunnelshade@gmail.com      |
-=================================
+thedumpster v1.3         
+================
 
 What is this?
 -------------
@@ -29,7 +26,6 @@ PyQuery - https://pypi.python.org/pypi/pyquery
 TODO:
 ----
 * Adding support for using theharvester domain results
-* Pastebin & Pastie search using emails for any password dumps
 * Adding larger number of dorks
 * Better division of dorks
 
@@ -39,9 +35,9 @@ tunnelshade@gmail.com
 
 Thanks:
 -------
-Christian Martorella -  theHarvester
-Gael Pasgrimaud - PyQuery
-Larry Page and Sergey Brin - Google :P
+* Christian Martorella -  theHarvester
+* Gael Pasgrimaud - PyQuery
+* Larry Page and Sergey Brin - Google :P
 
 Changelog
 ---------

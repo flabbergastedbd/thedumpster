@@ -2,6 +2,7 @@ import argparse
 import random
 import sqlite3
 from lib.googlesearch import Search_Google
+from lib.utils import update_progress
 import os
 
 print("""
@@ -133,7 +134,7 @@ if __name__ == '__main__':
         if args.pastebin == True:
             print("\n[+] Getting pastebin dumps for given domain\n")
             pastebin_list = []            
-            num = random.randrange(1,len(proxies),1)
+            num = random.randrange(0,len(proxies),1)
             obj = Search_Google('pastebin.com', ['intext:'+args.domain] , int(args.limit) , proxies[num])
             if args.websearch:
                 pastebin_list += obj.search(0)
@@ -148,9 +149,9 @@ if __name__ == '__main__':
         #========================================================================
         robots_list = []
         print('\n[+] Getting the robots.txt file links present !!!\n')
-        num = random.randrange(1,len(proxies),1)
+        num = random.randrange(0,len(proxies),1)
         # site:domain inurl:robots.txt filetype:txt intext:disallow
-        obj = Search_Google(args.domain, excl_sites + ['inurl:robots.txt','intext:disallow','filetype:txt'] , 20 , proxies[num])
+        obj = Search_Google(args.domain, excl_sites + ['inurl:robots.txt','intext:disallow'] , 20 , proxies[num])
         if args.websearch:
             robots_list += obj.search(0)
         else:
@@ -163,11 +164,12 @@ if __name__ == '__main__':
         #=========================================================================
         url_list = []            
         counter = 1
+        print('[+] '+'Starting the dork diving ;)')
         if len(dorks) != 0:
             for dork in dorks:
                 # Randomly a number is selected from the available number of proxies
                 num = random.randrange(0,len(proxies),1)
-                print('[+] Going through '+str(num)+' for request '+str(counter))
+                update_progress(round((counter-1)/len(dorks),2))
                 obj = Search_Google(args.domain, excl_sites +[dork]+search_words , int(args.limit) , proxies[num])
                 if args.websearch:
                     url_list += obj.search(0)
@@ -177,7 +179,7 @@ if __name__ == '__main__':
         else:
             # Randomly a number is selected from the available number of proxies
             num = random.randrange(0,len(proxies),1)
-            print('[+] Going through '+str(num)+' for request '+str(counter))
+            print('[+] Going through '+str(num+1)+' for request '+str(counter))
             obj = Search_Google(args.domain, excl_sites +search_words , int(args.limit) , proxies[num])
             if args.websearch:
                 url_list += obj.search(0)
