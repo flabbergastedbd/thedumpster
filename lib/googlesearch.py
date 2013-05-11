@@ -17,6 +17,7 @@ import time
 class Search_Google():
     def __init__(self, domain, search_words,  limit, proxy, proxy_username='', proxy_password=''):
         self.domain = domain
+        self.proxy = proxy
         proxy_handler = urllib.request.ProxyHandler(proxy)
         proxy_auth_handler = urllib.request.ProxyBasicAuthHandler()
         proxy_auth_handler.add_password(None, 'https://www.google.com/', proxy_username, proxy_password)
@@ -53,7 +54,7 @@ class Search_Google():
                     time.sleep(60)
                     
             except urllib.error.URLError as e:
-                print("[!] Proxy server  ^ "+" appears down")
+                print("[!] Proxy server "+str(self.proxy)+" appears down")
         return self.url_list
     #===========================================================================
     # A method which starts searching from given result number and runs till
@@ -82,5 +83,5 @@ class Search_Google():
                     time.sleep(60)
                     
             except urllib.error.URLError as e:
-                print("[!] Proxy server  ^ "+" appears down")
+                print("[!] Proxy server "+str(self.proxy)+" appears down")
         return self.url_list
