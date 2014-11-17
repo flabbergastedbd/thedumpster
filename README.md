@@ -33,12 +33,6 @@ Comments? Bugs? requests?
 ------------------------
 tunnelshade@gmail.com
 
-Thanks:
--------
-* Christian Martorella -  theHarvester
-* Gael Pasgrimaud - PyQuery
-* Larry Page and Sergey Brin - Google :P
-
 Changelog
 ---------
 
