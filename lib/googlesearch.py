@@ -10,18 +10,21 @@ from lib.parser import Google_Results_Parser, Google_Json_Parser
 import time
 
 #===============================================================================
-# A class which has methods for direct search of search through API. Both the 
+# A class which has methods for direct search of search through API. Both the
 # search methods have error catching ability for time-out and service unavailable
 # error. Gzip compression is used so as to reduce data usage.
 #===============================================================================
 class Search_Google():
-    def __init__(self, domain, search_words,  limit, proxy, proxy_username='', proxy_password=''):
+    def __init__(self, domain, search_words,  limit, proxy=None, proxy_username='', proxy_password=''):
         self.domain = domain
-        self.proxy = proxy
-        proxy_handler = urllib.request.ProxyHandler(proxy)
-        proxy_auth_handler = urllib.request.ProxyBasicAuthHandler()
-        proxy_auth_handler.add_password(None, 'https://www.google.com/', proxy_username, proxy_password)
-        self.opener = urllib.request.build_opener(proxy_handler, proxy_auth_handler)
+        if proxy is not None:
+            self.proxy = proxy
+            proxy_handler = urllib.request.ProxyHandler(proxy)
+            proxy_auth_handler = urllib.request.ProxyBasicAuthHandler()
+            proxy_auth_handler.add_password(None, 'https://www.google.com/', proxy_username, proxy_password)
+            self.opener = urllib.request.build_opener(proxy_handler, proxy_auth_handler)
+        else:
+            self.opener = urllib.request.build_opener()
         self.opener.addheaders = [('User-Agent','Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11'),
                                   ('Accept-Encoding','gzip')]
         self.url = 'https://www.google.com/search?hl=en&meta=&output=search'
@@ -31,11 +34,11 @@ class Search_Google():
         self.url += self.search_phrase
         self.limit = limit
         self.url_list = []
-    #=======================================================================    
+    #=======================================================================
     # A method which starts searching from given result number and runs till
     # the limit is exceeded or the search results get exhausted. The search
-    # is done directly without any JSON. Google_Results_Parser is called.     
-    #=======================================================================  
+    # is done directly without any JSON. Google_Results_Parser is called.
+    #=======================================================================
     def search(self, start):
         for start in range(0,self.limit,10):
             self.url += '&start=' + str(start)
@@ -52,7 +55,7 @@ class Search_Google():
                 if e == 'HTTP Error 503: Service Unavailable':
                     print("[!] Going to sleep for 1 minute to prevent lockout")
                     time.sleep(60)
-                    
+
             except urllib.error.URLError as e:
                 print("[!] Proxy server "+str(self.proxy)+" appears down")
         return self.url_list
@@ -63,8 +66,8 @@ class Search_Google():
     # , then replace the values in the first two lines. Google_Json_Parser called
     #===========================================================================
     def search_api(self,start):
-        self.url_api = 'https://www.googleapis.com/customsearch/v1?hl=en&cx=006870906752541368823:f6fsmzjzc0q'
-        self.url_api += '&key=AIzaSyBuBomy0n51Gb4836isK2Mp65UZI_DrrwQ'
+        self.url_api = 'https://www.googleapis.com/customsearch/v1?hl=en&cx=006870906752541368823:e2em1hbfmfe'
+        self.url_api += '&key=AIzaSyC8aj1lOsNjg087WSxnIEYuxtGpBmtGjjE'
         self.url_api += self.search_phrase
         for start in range(0,self.limit,10):
             self.url += '&start=' + str(start)
@@ -81,7 +84,7 @@ class Search_Google():
                 if e == 'HTTP Error 503: Service Unavailable':
                     print("[!] Going to sleep for 1 minute to prevent lockout")
                     time.sleep(60)
-                    
+
             except urllib.error.URLError as e:
                 print("[!] Proxy server "+str(self.proxy)+" appears down")
         return self.url_list

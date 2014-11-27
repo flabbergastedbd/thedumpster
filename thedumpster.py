@@ -7,17 +7,18 @@ import os
 
 print("""
 ================================================================
-  _   _                _                           _            
- | | | |              | |                         | |           
- | |_| |__   ___    __| |_   _ _ __ ___  _ __  ___| |_ ___ _ __ 
+  _   _                _                           _
+ | | | |              | |                         | |
+ | |_| |__   ___    __| |_   _ _ __ ___  _ __  ___| |_ ___ _ __
  | __| '_ \ / _ \  / _` | | | | '_ ` _ \| '_ \/ __| __/ _ \ '__|
- | |_| | | |  __/ | (_| | |_| | | | | | | |_) \__ \ ||  __/ |   
-  \__|_| |_|\___|  \__,_|\__,_|_| |_| |_| .__/|___/\__\___|_|   
-                                        | |                     
-                                        |_|                     
-                Version-1.3  Made by tunnelshade
+ | |_| | | |  __/ | (_| | |_| | | | | | | |_) \__ \ ||  __/ |
+  \__|_| |_|\___|  \__,_|\__,_|_| |_| |_| .__/|___/\__\___|_|
+                                        | |
+                                        |_|
+                        Version-1.3
+          Made by Bharadwaj `tunnelshade` Machiraju
         tunnelshade[at]gmail.com <=> www.tunnelshade.in
-        
+
 ================================================================""")
 
 project_root = os.path.dirname(os.path.abspath(__file__))
@@ -34,26 +35,28 @@ parser.add_argument("-p","--pastebin",help="Flag to search for pastebin dumps",a
 parser.add_argument("-a","--add", help="Extra Search terms to be included(Separate using comma)")
 parser.add_argument("-r","--rem", help="sites to be excluded from search results(Separate using comma)")
 parser.add_argument("-ws","--websearch",help="To enable the use of google's search directly",action="store_true")
+parser.add_argument("-proxy","--proxy",help="To enable the use of proxies",action="store_true")
 
 args, unknown = parser.parse_known_args()
 
 if __name__ == '__main__':
-    
+
     #===========================================================================
     # Code to read proxies from config file and populate proxies list,which will
     # be used for building opener in Google_Search class
     #===========================================================================
     proxies = []
-    f = open(os.path.join(project_root,'config'),'r')
-    for line in f.readlines():
-        line = str(line).rstrip('\n')
-        proxies.append({'http':'http://'+line,'https':'https://'+line})
-    f.close()
-    
+    if args.proxy == True:
+        f = open(os.path.join(project_root,'config'),'r')
+        for line in f.readlines():
+            line = str(line).rstrip('\n')
+            proxies.append({'http':'http://'+line,'https':'https://'+line})
+        f.close()
+
     # This dorks list will be populated either by ghdb or adminpage.db or both
     dorks = []
     #===========================================================================
-    # If ghdb flag is set in params, then this block executes providing user to 
+    # If ghdb flag is set in params, then this block executes providing user to
     # select type of dorks to use from ghdb.db. The select statement is executed
     # here and "dorks" list is populated using those results
     #===========================================================================
@@ -81,7 +84,7 @@ if __name__ == '__main__':
         for row in c:
             dorks.append(row[0])
         conn.commit()
-        c.close()   
+        c.close()
     #===========================================================================
     # If admin page finding flag is provided then this block executes providing
     # user to select the possible backend of the sites & corresponding dorks are
@@ -99,13 +102,13 @@ if __name__ == '__main__':
         for row in c:
             dorks.append(row[0])
         conn.commit()
-        c.close()   
+        c.close()
     #==========================================================================
     # Info about domain, limit and number of proxies are printed to console
     #==========================================================================
     print('\n[+] Domain      => '+ str(args.domain))
     print('[+] Limit/Dork  => '+str(args.limit))
-    print('[+] Proxies     => '+str(len(proxies)))    
+    print('[+] Proxies     => '+str(len(proxies)))
     #==========================================================================
     # If extra search parameters are provided then this code block executes
     # & populates the search_words list.(The separator is ',' (comma))
@@ -116,10 +119,10 @@ if __name__ == '__main__':
             search_words.append(phrases)
         print('[+] Extra       => '+str(search_words))
     #==========================================================================
-    # If sites are provided which are to be excluded, excl_sites list is 
+    # If sites are provided which are to be excluded, excl_sites list is
     # populated using comma as separator & adding '-' at the beginning of site
     #==========================================================================
-    excl_sites = []    
+    excl_sites = []
     if args.rem != None:
         for site in args.rem.split(','):
             excl_sites.append('-'+str(site))
@@ -133,9 +136,9 @@ if __name__ == '__main__':
         #=======================================================================
         if args.pastebin == True:
             print("\n[+] Getting pastebin dumps for given domain\n")
-            pastebin_list = []            
-            num = random.randrange(0,len(proxies),1)
-            obj = Search_Google('pastebin.com', ['intext:'+args.domain] , int(args.limit) , proxies[num])
+            pastebin_list = []
+            proxy = None if (len(proxies) == 0) else proxies[random.randrange(0,len(proxies),1)]
+            obj = Search_Google('pastebin.com', ['intext:'+args.domain] , int(args.limit) , proxy)
             if args.websearch:
                 pastebin_list += obj.search(0)
             else:
@@ -149,9 +152,9 @@ if __name__ == '__main__':
         #========================================================================
         robots_list = []
         print('\n[+] Getting the robots.txt file links present !!!\n')
-        num = random.randrange(0,len(proxies),1)
+        proxy = None if (len(proxies) == 0) else proxies[random.randrange(0,len(proxies),1)]
         # site:domain inurl:robots.txt filetype:txt intext:disallow
-        obj = Search_Google(args.domain, excl_sites + ['inurl:robots.txt','intext:disallow'] , 20 , proxies[num])
+        obj = Search_Google(args.domain, excl_sites + ['inurl:robots.txt','intext:disallow'] , 20 , proxy)
         if args.websearch:
             robots_list += obj.search(0)
         else:
@@ -162,15 +165,15 @@ if __name__ == '__main__':
         #=========================================================================
         # The search starts here, using dorks list populated by ghdb||adminpage.db
         #=========================================================================
-        url_list = []            
+        url_list = []
         counter = 1
         print('[+] '+'Starting the dork diving ;)')
         if len(dorks) != 0:
             for dork in dorks:
                 # Randomly a number is selected from the available number of proxies
-                num = random.randrange(0,len(proxies),1)
+                proxy = None if (len(proxies) == 0) else proxies[random.randrange(0,len(proxies),1)]
                 update_progress(round((counter-1)/len(dorks),2))
-                obj = Search_Google(args.domain, excl_sites +[dork]+search_words , int(args.limit) , proxies[num])
+                obj = Search_Google(args.domain, excl_sites +[dork]+search_words , int(args.limit) , proxy)
                 if args.websearch:
                     url_list += obj.search(0)
                 else:
@@ -178,17 +181,21 @@ if __name__ == '__main__':
                 counter += 1
         else:
             # Randomly a number is selected from the available number of proxies
-            num = random.randrange(0,len(proxies),1)
-            print('[+] Going through '+str(num+1)+' for request '+str(counter))
-            obj = Search_Google(args.domain, excl_sites +search_words , int(args.limit) , proxies[num])
+            if len(proxies) == 0:
+                proxy = None
+            else:
+                num = random.randrange(0,len(proxies),1)
+                proxy = proxies[num]
+                print('[+] Going through '+str(num+1)+' for request '+str(counter))
+            obj = Search_Google(args.domain, excl_sites +search_words , int(args.limit) , proxy)
             if args.websearch:
                 url_list += obj.search(0)
             else:
                 url_list += obj.search_api(0)
-            counter += 1            
+            counter += 1
     # Ctrl + C is caught so that obtained urls can be displayed
     except KeyboardInterrupt:
-        print("\n[*] Ok dude, Shutting the sh'it' down \n")
+        print("\n[*] Ok dude, Shutting it down \n")
     finally:
         print("\n[+] URLS Found So Far !!!\n")
         for url in url_list:
